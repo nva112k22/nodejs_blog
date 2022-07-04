@@ -1,0 +1,141 @@
+<form name="container-form" method="POST" action="/accounts/handle-form-actions" class="mt-4">
+
+    <div>
+    <h3>Danh sách người dùng</h3>
+    <a href="/me/trash/accounts">Khôi phục tài khoản({{deletedCount}})</a>
+
+    <div class="mt-4 d-flex align-items-center">
+       <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+      <label class="form-check-label" for="checkbox-all">
+        Chọn tất cả
+      </label>
+      </div>
+
+      <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
+      <option value="">--- Hành động ---</option>
+      <option value="delete">Xóa</option>
+    </select>
+    <button class="btn btn-primary btn-sm check-all-submit-btn " disabled="disabled">Áp dụng</button>
+    </div>
+  </div>
+    
+    <table class="table mt-4">
+  <thead>
+    <tr>
+      <th scope="col" colspan="2">#</th>
+      <th scope="col">Tên người dùng</th>
+      <th scope="col">Email</th>
+      <th scope="col">Địa chỉ</th>
+      <th scope="col">Vai trò</th>
+      <th scope="col" colspan="2">Thời gian tạo</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each accounts}}
+    <tr>
+      <td>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="accountIds[]" value="{{this._id}}">
+      </div>
+      </td>
+      <th scope="row">{{sum @index 1}}</th>
+      <td>{{this.name}}</td>
+      <td>{{this.email}}</td>
+      <td>{{this.address}}</td>
+      <td>{{this.role}}</td>
+      <td>{{this.createdAt}}</td>
+      <td>
+          <a href="/accounts/{{this._id}}/edit" class="btn btn-link">Sửa</a>
+          <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-account-modal">Xóa</a>
+      </td>
+    </tr>
+    {{else}}
+    <tr>
+      <td colspan="5" class="text-center">
+        Bạn chưa tạo tài khoản người dùng nào.
+        <a href="/accounts/create">Tạo tài khoản người dùng</a>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</form>
+
+
+{{!-- Confirm delete --}}
+<div id="delete-account-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa người dùng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn chắc chắn muốn xóa người dùng này ?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete-account" type="button" class="btn btn-danger">Xóa bỏ</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Delete hidden form --}}
+
+<form name="delete-account-form" method="POST"></form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function( ) {
+    var accountId;
+    var deleteForm = document.forms['delete-account-form'];
+    //var containerForm = document.forms['container-form'];
+    var containerForm = $('form[name="container-form"]');
+    var btnDeleteaccount = document.getElementById('btn-delete-account');
+    var checkboxAll = $('#checkbox-all');
+    var accountItemCheckbox = $('input[name="accountIds[]"]');
+    var checkAllSubmitBtn = $('.check-all-submit-btn');
+console.log(containerForm);
+    //When dialog confirm clicked
+    $('#delete-account-modal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      accountId = button.data('id');
+    });
+
+    btnDeleteaccount.onclick = function ( ) {
+      deleteForm.action = '/accounts/' +accountId +'?_method=DELETE';
+      deleteForm.submit();
+    }
+    //Checkbox all changed
+    checkboxAll.change(function() {
+        var isCheckedAll = $(this).prop('checked');
+          accountItemCheckbox.prop('checked', isCheckedAll);
+          renderCheckAllSubmitBtn();
+    });
+
+
+    //account item checkbox changed
+      accountItemCheckbox.change(function() {
+        var isCheckedAll = accountItemCheckbox.length === $('input[name="accountIds[]"]:checked').length;
+        checkboxAll.prop('checked', isCheckedAll);
+        renderCheckAllSubmitBtn();
+        });
+        //Re-render check all submit button
+        function renderCheckAllSubmitBtn() {
+            var checkedCount = $('input[name="accountIds[]"]:checked').length;
+            if(checkedCount > 0) {
+                checkAllSubmitBtn.attr('disabled', false);
+            } else {
+                checkAllSubmitBtn.attr('disabled', true);
+
+            }
+        }
+  });
+</script> 
+  
+
+
+

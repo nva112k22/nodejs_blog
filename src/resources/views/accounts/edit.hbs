@@ -1,0 +1,31 @@
+<div class="mt-4">
+    <h3>Cập nhật thông tin người dùng</h3>
+
+    <form class="mt-4" method="POST" action="/accounts/{{account._id}}?_method=PUT">
+  <div class="form-group">
+    <label for="username">Tên người dùng</label>
+    <input type="text" class="form-control" value="{{account.name}}" id="username" name="username">
+  </div>
+  <div class="form-group">
+    <label for="password">Mật khẩu</label>
+    <input type="password" class="form-control" value="{{account.password}}" id="password" name="password" disabled>
+  </div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="text" class="form-control" value="{{account.email}}" id="email" name="email" disabled>
+  </div>
+  <div class="form-group">
+    <label for="address">Địa chỉ</label>
+    <input type="text" class="form-control" value="{{account.address}}" id="address" name="address">
+  </div>
+  <div class="form-group">
+    <label for="video">Video</label>
+    <input type="text" class="form-control" value="{{account.video}}" id="video" name="video">
+  </div>
+  <div class="form-group">
+    <label for="role">Vai trò</label>
+    <input type="text" class="form-control" value="{{account.role}}" id="role" name="role">
+  </div>
+  <button type="submit" class="btn btn-primary">Lưu lại</button>
+</form>
+</div>
